@@ -34,8 +34,8 @@ def COST231_DenseUrban(f, hBS, hms, d):
 
 
 PL_UMiNLOS = UMiNLOS(d_m, f_GHz)
-PL_COST231 = COST231_urban(f_MHz, hBS, hms, d_km)
-# PL_COST231 = COST231_DenseUrban(f_MHz, hBS, hms, d_km)
+#PL_COST231 = COST231_urban(f_MHz, hBS, hms, d_km)
+PL_COST231 = COST231_DenseUrban(f_MHz, hBS, hms, d_km)
 
 diff_COST231_UL = PL_COST231 - MAPL_UL
 diff_COST231_DL = PL_COST231 - MAPL_DL
@@ -82,8 +82,8 @@ print("Требуемое количество фемтосот (4 кв. км):"
 
 plt.figure(figsize=(10, 6))
 plt.plot(d_km, PL_UMiNLOS, label='UMiNLOS')
-plt.plot(d_km, PL_COST231, label='COST231 (Город)')
-# plt.plot(d_km, PL_COST231, label='COST231 (Плотная городская застройка)')
+# plt.plot(d_km, PL_COST231, label='COST231 (Город)')
+plt.plot(d_km, PL_COST231, label='COST231 (Плотная городская застройка)')
 plt.axhline(y=MAPL_UL, color='green', linestyle='--', label='MAPL_UL')
 plt.axhline(y=MAPL_DL, color='red', linestyle='--', label='MAPL_DL')
 

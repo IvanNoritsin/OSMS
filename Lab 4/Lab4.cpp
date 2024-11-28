@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <map>
 
 #define LENGTH_SEQUENCE 31
 
@@ -88,10 +89,72 @@ void print_table(vector<int>& sequence){
     }
 }
 
+bool balance(vector<int>& sequence){
+    int zeros = 0;
+    int ones = 0;
+
+    for (int i : sequence){
+        if (i == 0){
+            zeros++;
+        }
+        else {
+            ones++;
+        }
+    }
+
+    return abs(ones - zeros) <= 1;
+
+}
+
+map<int, int> cycle_lengths(vector<int>& sequence) {
+    map<int, int> cycles;
+    int count = 1;
+    for (size_t i = 1; i < sequence.size(); i++) {
+        if (sequence[i] == sequence[i - 1]) {
+            count++;
+        } else {
+            cycles[count]++;
+            count = 1;
+        }
+    }
+    cycles[count]++;
+    return cycles;
+}
+
+bool cycle(const map<int, int>& cycle) {
+    int total_length = 0;
+    int counter = 2;
+    for (auto& pair : cycle){
+        total_length += pair.second;
+    }
+
+    for (auto& pair : cycle){
+        if ((total_length / pair.second != counter)){
+            return 0;
+        }
+        if (pair.second != 1){
+        counter *= 2;
+        }
+    }
+
+    return 1;
+}
+
+bool check_autocorr(vector<int>& sequence){
+        for (int i = 1; i < LENGTH_SEQUENCE; i++){
+        vector<int> shifted_sequence = shift_sequence(sequence, i);
+        double corr = autoCorrelation(sequence, shifted_sequence);
+        if (abs(corr) >= 0.1){
+            return 0;
+        }
+    }
+    return 1;
+}
+
 
 int main(){
-    vector<int> x = {0, 1, 1, 0, 0};
-    vector<int> y = {1, 0, 0, 1, 1};
+    vector<int> x = {0, 0, 0, 0, 0};
+    vector<int> y = {0, 0, 0, 0, 0};
 
     cout << "Последовательность Голда: ";
     vector<int> gold_sequence = create_gold_sequence(x, y);
@@ -113,5 +176,43 @@ int main(){
 
     double norm_corr = NormalizedCorrelation(gold_sequence, new_gold_sequence);
     cout << "Взаимная корреляция исходной и новой последовательности: " << norm_corr << endl;
+    cout << endl;
+    cout << "-------------------------------------------------------------------------" << endl;
 
+    bool is_balanced = balance(gold_sequence);
+    if (is_balanced == 1){
+        cout << "Последовательность сбалансированна" << endl;
+    }
+    else {
+        cout << "Последовательность не сбалансированна" << endl;
+    }
+
+    map<int, int> cycles = cycle_lengths(gold_sequence);
+    cout << "Циклы:\n";
+    for (auto& pair : cycles) {
+        cout << "Длина " << pair.first << ": " << pair.second << endl;
+    }
+
+    bool is_cycle = cycle(cycles);
+    if (is_cycle == 1){
+        cout << "Последовательность обладает свойством цикличности" << endl;
+    }
+    else {
+        cout << "Последовательность не обладает свойством цикличности" << endl;
+    }
+
+    bool is_autocorr = check_autocorr(gold_sequence);
+    if (is_autocorr == 1){
+        cout << "Последовательность обладает свойством корреляции" << endl;
+    }
+    else{
+        cout << "Последовательность не обладает свойством корреляции" << endl;
+    }
+
+    if (is_balanced && is_cycle && is_autocorr){
+        cout << "Последовательность является последовательностью Голда" << endl;
+    }
+    else{
+        cout << "Последовательность не является последовательностью Голда" << endl;
+    }
 }
